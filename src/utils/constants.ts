@@ -1,0 +1,1 @@
+export const TAFFY_TOKEN_ADDRESS = "0x123456789";
