@@ -27,7 +27,7 @@ function Voting() {
 								<button className={`flex justify-between w-40 p-1 border-[1px] border-gray-300 rounded-sm font-semibold items-center`}>
 									<FilterIcon className="h-6 w-6 text-blue-500" />
 									<div className="flex w-full justify-between items-center px-2">
-										<p className="text-xs">{sortedBy == "popular" ? "Most Popular" : sortedBy == "closing" ? "Closing soonest" : sortedBy == "apy" ? "Highest APY" : sortedBy == "staked" ? "Amount staked" : ""}</p>
+										<p className="text-xs">{sortedBy == "popular" ? "Most Popular" : sortedBy == "closing" ? "Closing soonest" : sortedBy == "staked" ? "Amount staked" : ""}</p>
 									</div>
 									<ChevronDownIcon className="h-6 w-6 text-gray-300" />
 								</button>
@@ -39,10 +39,6 @@ function Voting() {
 									<div onClick={() => setSortedBy("closing")} className="flex justify-between items-center py-1 cursor-pointer px-4 text-gray-700 hover:bg-gray-100">
 										<p className="block py-2 text-sm text-gray-700 hover:bg-gray-100">Closing soonest</p>
 										{sortedBy == "closing" && <CheckIcon className="h-4 w-4 text-green-500" />}
-									</div>
-									<div onClick={() => setSortedBy("apy")} className="flex justify-between items-center py-1 cursor-pointer px-4 text-gray-700 hover:bg-gray-100">
-										<p className="block py-2 text-sm">Highest APY</p>
-										{sortedBy == "apy" && <CheckIcon className="h-4 w-4 text-green-500" />}
 									</div>
 									<div onClick={() => setSortedBy("staked")} className="flex justify-between items-center py-1 cursor-pointer px-4 text-gray-700 hover:bg-gray-100">
 										<p className="block py-2 text-sm text-gray-700 hover:bg-gray-100">Amount staked</p>

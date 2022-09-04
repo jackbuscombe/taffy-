@@ -3,7 +3,6 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import capitalizeFirstLetter from "../hooks/capitalizeFirstLetter";
 import { trpc } from "../utils/trpc";
 
 type VotingCardProps = {

@@ -4,7 +4,6 @@ import NftCardExtended from "../../components/NftCardExtended";
 import { useRouter } from "next/router";
 import BackProjectModal from "../../components/BackProjectModal";
 import unixToDateTime from "../../hooks/unixToDateTime";
-import capitalizeFirstLetter from "../../hooks/capitalizeFirstLetter";
 import dateToUnix from "../../hooks/dateToUnix";
 import secondsToDhms from "../../hooks/secondsToDhms";
 import VotingCard from "../../components/VotingCard";
@@ -256,7 +255,7 @@ function Project({ id }: { id: string }) {
 									<img src={projectImage} alt={projectName} className="h-[127px] w-[127px] rounded-full object-cover" />
 								</div>
 								<div className="flex flex-col justify-center sm:flex-row sm:items-center sm:space-x-2">
-									<h1 className="text-white font-bold text-xl">{capitalizeFirstLetter(projectName)}</h1>
+									<h1 className="text-white font-bold text-xl">{projectName}</h1>
 									<p className="text-gray-300">{projectTicker.toUpperCase()}</p>
 								</div>
 							</div>
@@ -378,7 +377,7 @@ function Project({ id }: { id: string }) {
 					<div className={`flex flex-col w-2/3 bg-white rounded-md p-4 divide-y`}>
 						<div className="flex flex-col md:flex-row py-4 justify-between">
 							<div className="flex flex-col space-y-3">
-								<h2 className="text-2xl text-gray-800 font-bold">{capitalizeFirstLetter(projectName)}</h2>
+								<h2 className="text-2xl text-gray-800 font-bold">{projectName}</h2>
 								<p className="italic">{projectDescription}</p>
 								<hr className="" />
 								<div className="flex items-center space-x-2 text-sm">
@@ -554,7 +553,7 @@ function Project({ id }: { id: string }) {
 							<h2 className="text-2xl text-gray-800 font-bold mb-5">About</h2>
 							<div className="flex flex-col md:flex-row space-x-4 py-4">
 								<p className="font-semibold">Project Name:</p>
-								<p>{capitalizeFirstLetter(projectName)}</p>
+								<p>{projectName}</p>
 							</div>
 						</div>
 

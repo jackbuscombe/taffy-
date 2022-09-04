@@ -122,10 +122,6 @@ function Rewards() {
 								<p className="text-lg font-semibold">${TAFFY_TOKEN_DATA.staked.toLocaleString()}</p>
 								<p className="text-sm text-gray-400">Staked (USD)</p>
 							</div>
-							<div className="border-l-[1px] border-gray-100 pl-4">
-								<p className="text-lg font-semibold">{10}%</p>
-								<p className="text-sm text-gray-400">Est APY</p>
-							</div>
 						</div>
 						<div className="flex justify-center items-center space-x-2">
 							<button className="flex-1 text-sm py-2 border-[1px] rounded-sm border-blue-100 text-[#5082fb] font-semibold hover:bg-[#5082fb] hover:text-white">Buy Taffy</button>

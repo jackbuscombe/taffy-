@@ -1,9 +1,7 @@
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
-import capitalizeFirstLetter from "../hooks/capitalizeFirstLetter";
 import { trpc } from "../utils/trpc";
 import EarningsTableRow from "./EarningsTableRow";
-import StakeTokenModal from "./StakeTokenModal";
 
 type TableProps = {
 	contributionArray: any;
@@ -64,6 +62,7 @@ function EarningsTable() {
 				sales: backedProjects[i]?.amount,
 				royalty: backedProjects[i]?.amount,
 				revenue: backedProjects[i]?.amount,
+				ticker: backedProjects[i]?.Project.ticker,
 			});
 		}
 
@@ -93,8 +92,8 @@ function EarningsTable() {
 					</tr>
 				</thead>
 				<tbody>
-					{tableData?.map(({ id, projectName, sales, royalty, revenue }, i) => (
-						<EarningsTableRow key={i} projectId={id} projectName={projectName} sales={sales} royalty={royalty} revenue={revenue} />
+					{tableData?.map(({ id, projectName, sales, royalty, revenue, ticker }, i) => (
+						<EarningsTableRow key={i} projectId={id} projectName={projectName} sales={sales} royalty={royalty} revenue={revenue} ticker={ticker} />
 						// <tr key={i} className="bg-white border-b hover:bg-gray-50">
 						// 	<th onClick={() => router.push(`/project/${id}`)} scope="row" className="text-blue-600 font-semibold px-4 py-2 border-[1px] border-gray-300 whitespace-nowrap cursor-pointer hover:underline">
 						// 		{projectName}

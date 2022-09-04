@@ -4,7 +4,6 @@ import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { useBalance } from "wagmi";
-import capitalizeFirstLetter from "../hooks/capitalizeFirstLetter";
 import dateToUnix from "../hooks/dateToUnix";
 import { trpc } from "../utils/trpc";
 
@@ -27,7 +26,7 @@ function BackProjectModal({ setIsBackingModalOpen, endTime, raiseTokenAddress, r
 	const createContribution = trpc.useMutation(["contribution.createContribtuion"]);
 	const [raiseTokenBalance, setRaiseTokenBalance] = useState(0);
 	const [ethBalance, setEthBalance] = useState(5.1232323);
-	const [backingAmount, setBackingAmount] = useState<number>(0);
+	const [backingAmount, setBackingAmount] = useState("");
 	const [termsAgreed, setTermsAgreed] = useState(false);
 	const router = useRouter();
 	const backProjectModalWrapper = useRef(null);
@@ -53,7 +52,7 @@ function BackProjectModal({ setIsBackingModalOpen, endTime, raiseTokenAddress, r
 
 		try {
 			const createdContribution = await createContribution.mutateAsync({
-				amount: backingAmount,
+				amount: parseFloat(backingAmount),
 				contributedTokenAddress: tokenId,
 				projectId: projectId,
 			});
@@ -112,7 +111,7 @@ function BackProjectModal({ setIsBackingModalOpen, endTime, raiseTokenAddress, r
 			<div ref={backProjectModalWrapper} className="h-full md:h-auto">
 				<div className="relative p-6 w-full max-w-md h-full md:h-auto bg-gray-50 rounded-lg shadow-2xl border border-gray-900">
 					<div className="flex justify-between items-center">
-						<h2 className="text-xl mb-2">Back {capitalizeFirstLetter(projectName)}</h2>
+						<h2 className="text-xl mb-2">Back {projectName}</h2>
 						<XIcon onClick={() => setIsBackingModalOpen(false)} className="h-8 w-8 sm:h-10 sm:w-10 cursor-pointer sm:p-2 hover:bg-gray-300 rounded-full" />
 					</div>
 					<p className="text-gray-500 mb-4">Nor again is there anyone who loves or pursues or desires to obtain pain of itself</p>
@@ -121,15 +120,16 @@ function BackProjectModal({ setIsBackingModalOpen, endTime, raiseTokenAddress, r
 					<div className="flex text-gray-500 mb-4">
 						<p>
 							Balance:{" "}
-							<span onClick={() => setBackingAmount(raiseTokenBalance)} className="text-blue-500 cursor-pointer">
+							<span onClick={() => setBackingAmount(raiseTokenBalance.toString())} className="text-blue-500 cursor-pointer">
 								{raiseTokenBalance} {raiseTokenTicker.toUpperCase()}
 							</span>
 						</p>
 					</div>
 
 					<div className="w-full border border-gray-200 flex flex-col sm:flex-row justify-between p-2 mb-4">
-						<input type="number" placeholder={`0 ${raiseTokenTicker}`} className="flex-grow flex-1 outline-none bg-transparent placeholder:text-gray-400" value={`${backingAmount}`} onChange={(e) => setBackingAmount(parseFloat(e.target.value))} onWheel={(e) => (e.target as HTMLInputElement).blur()} />
-						<p onClick={() => setBackingAmount(raiseTokenBalance)} className="font-semibold text-gray-400 cursor-pointer">
+						<p className="font-semibold mr-3">{raiseTokenTicker}</p>
+						<input type="number" placeholder={`0 ${raiseTokenTicker}`} className="flex-grow flex-1 outline-none bg-transparent placeholder:text-gray-400" value={`${backingAmount}`} onChange={(e) => setBackingAmount(e.target.value)} onWheel={(e) => (e.target as HTMLInputElement).blur()} />
+						<p onClick={() => setBackingAmount(raiseTokenBalance.toString())} className="font-semibold text-gray-400 cursor-pointer">
 							MAX
 						</p>
 					</div>
@@ -148,7 +148,7 @@ function BackProjectModal({ setIsBackingModalOpen, endTime, raiseTokenAddress, r
 							</span> */}
 						</p>
 						<p className="font-semibold">
-							{parseFloat(((backingAmount / target) * 100).toFixed(5)) ?? 0}%{/* {outputAmount.toFixed(5)} {projectTicker.toUpperCase()} */}
+							{parseFloat(((Number(backingAmount) / target) * 100).toFixed(5)) ?? 0}%{/* {outputAmount.toFixed(5)} {projectTicker.toUpperCase()} */}
 						</p>
 					</div>
 

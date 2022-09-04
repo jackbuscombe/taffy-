@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
-import capitalizeFirstLetter from "../hooks/capitalizeFirstLetter";
 
 type NftCardExtendedType = {
 	id: string;
@@ -21,8 +20,8 @@ function NftCardExtended({ id, nftUrl, nftName, projectName, price, creatorImage
 				<img className=" w-full rounded-t-md group-hover:opacity-80 transition transform ease-in-out" src={nftUrl} />
 				<div className="p-4 space-y-3">
 					<div>
-						<a className="font-semibold text-black">{capitalizeFirstLetter(nftName)}</a>
-						<h5 className="text-gray-400 font-light">{capitalizeFirstLetter(projectName)}</h5>
+						<a className="font-semibold text-black">{nftName}</a>
+						<h5 className="text-gray-400 font-light">{projectName}</h5>
 					</div>
 					<p className="font-semibold text-gray-500 text-xs">{price} ETH</p>
 					<div className="flex flex-col sm:flex-row sm:items-center">

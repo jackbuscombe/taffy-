@@ -10,13 +10,12 @@ import { useEffect, useState } from "react";
 import { useToken } from "wagmi";
 import NftCard from "../../components/NftCard";
 import VotingCard from "../../components/VotingCard";
-import capitalizeFirstLetter from "../../hooks/capitalizeFirstLetter";
 import secondsToDhms from "../../hooks/secondsToDhms";
 import unixToDateTime from "../../hooks/unixToDateTime";
 import { trpc } from "../../utils/trpc";
 import { authOptions } from "../api/auth/[...nextauth]";
 
-function Admin({ id }: { id: string } /*{ id, projectName, projectTicker, projectImage, bannerImage, endDate, ended, contributionsValue, target, secondsLeft, tokenId, tokenPrice, amountStaked, views, contributionsCount, followersCount, proposals, upcomingNfts, releasedNfts }: AdminPageType*/) {
+function Admin({ id }: { id: string }) {
 	const { data: session, status } = useSession();
 	const router = useRouter();
 	const { data: project, isFetching: fetchingProject } = trpc.useQuery(["project.getSpecificProject", { id: id }]);

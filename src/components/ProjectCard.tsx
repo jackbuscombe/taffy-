@@ -1,6 +1,5 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import capitalizeFirstLetter from "../hooks/capitalizeFirstLetter";
 import secondsToDhms from "../hooks/secondsToDhms";
 import unixToDateTime from "../hooks/unixToDateTime";
 import BackProjectModal from "./BackProjectModal";

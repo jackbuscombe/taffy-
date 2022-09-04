@@ -3,7 +3,6 @@ import React, { useEffect, useRef, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { useRouter } from "next/router";
 import { XIcon } from "@heroicons/react/outline";
-import capitalizeFirstLetter from "../hooks/capitalizeFirstLetter";
 import { useSession, signOut } from "next-auth/react";
 import { trpc } from "../utils/trpc";
 import deployNft from "../utils/deployNft";

@@ -1,6 +1,5 @@
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
-import capitalizeFirstLetter from "../hooks/capitalizeFirstLetter";
 import { trpc } from "../utils/trpc";
 
 type SearchDropdownProps = {

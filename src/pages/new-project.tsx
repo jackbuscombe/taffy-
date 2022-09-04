@@ -850,16 +850,32 @@ function NewProject() {
 												</li>
 												<li
 													onClick={() => {
-														setRaiseAssetAddress("0xd2877702675e6cEb975b4A1dFf9fb7BAF4C91ea9");
+														setRaiseAssetAddress("0x6b175474e89094c44da98b954eedeac495271d0f");
 														setIsRaiseAssetDropdownOpen(false);
 													}}
 												>
 													<div className="flex p-2 rounded hover:bg-gray-100">
 														<div className="flex items-center space-x-3 ml-2 text-sm cursor-pointer">
-															<img src="https://nomics.com/imgpr/https%3A%2F%2Fs3.us-east-2.amazonaws.com%2Fnomics-api%2Fstatic%2Fimages%2Fcurrencies%2FLUNA.png?width=48" alt="" className="h-4 w-4" />
+															<img src="https://nomics.com/imgpr/https%3A%2F%2Fs3.us-east-2.amazonaws.com%2Fnomics-api%2Fstatic%2Fimages%2Fcurrencies%2FDAI.svg?width=96" alt="" className="h-4 w-4" />
 															<label className="font-medium text-gray-900 cursor-pointer">
-																<div>LUNA</div>
-																<p className="text-xs font-normal text-gray-500">0xd287...4c91ea9</p>
+																<div>DAI</div>
+																<p className="text-xs font-normal text-gray-500">0x6b17...5271d0f</p>
+															</label>
+														</div>
+													</div>
+												</li>
+												<li
+													onClick={() => {
+														setRaiseAssetAddress("0x2260fac5e5542a773aa44fbcfedf7c193bc2c599");
+														setIsRaiseAssetDropdownOpen(false);
+													}}
+												>
+													<div className="flex p-2 rounded hover:bg-gray-100">
+														<div className="flex items-center space-x-3 ml-2 text-sm cursor-pointer">
+															<img src="https://nomics.com/imgpr/https%3A%2F%2Fs3.us-east-2.amazonaws.com%2Fnomics-api%2Fstatic%2Fimages%2Fcurrencies%2FWBTC.png?width=96" alt="" className="h-4 w-4" />
+															<label className="font-medium text-gray-900 cursor-pointer">
+																<div>WBTC</div>
+																<p className="text-xs font-normal text-gray-500">0x2260...bc2c599</p>
 															</label>
 														</div>
 													</div>

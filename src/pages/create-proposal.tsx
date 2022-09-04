@@ -2,7 +2,6 @@ import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { ChevronDownIcon, XIcon } from "@heroicons/react/outline";
-import capitalizeFirstLetter from "../hooks/capitalizeFirstLetter";
 import unixToDateTime from "../hooks/unixToDateTime";
 import { useSession } from "next-auth/react";
 import { trpc } from "../utils/trpc";

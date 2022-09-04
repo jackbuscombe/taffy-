@@ -5,7 +5,6 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import EarningsTable from "../../components/EarningsTable";
 import NftCardExtended from "../../components/NftCardExtended";
-import capitalizeFirstLetter from "../../hooks/capitalizeFirstLetter";
 import { NftType } from "../../types/typings";
 import { trpc } from "../../utils/trpc";
 
@@ -129,7 +128,7 @@ function Nft({ id }: { id: string }) {
 						<p>
 							Created By{" "}
 							<Link href={`/project/${projectId}`}>
-								<a className="text-blue-500 cursor-pointer hover:underline ml-2">{capitalizeFirstLetter(projectName)}</a>
+								<a className="text-blue-500 cursor-pointer hover:underline ml-2">{projectName}</a>
 							</Link>
 						</p>
 					</div>

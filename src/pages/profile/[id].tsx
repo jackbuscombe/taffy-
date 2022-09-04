@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import ProjectCard from "../../components/ProjectCard";
 import NftCardExtended from "../../components/NftCardExtended";
 import { NftType, UserType } from "../../types/typings";
-import capitalizeFirstLetter from "../../hooks/capitalizeFirstLetter";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import { trpc } from "../../utils/trpc";

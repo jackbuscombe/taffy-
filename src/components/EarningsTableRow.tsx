@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import StakeTokenModal from "./StakeTokenModal";
 
-function EarningsTableRow({ key, projectId, projectName, sales, royalty, revenue }: any) {
+function EarningsTableRow({ key, projectId, projectName, ticker, sales, royalty, revenue }: any) {
 	const router = useRouter();
 	const [isStakingModalOpen, setIsStakingModalOpen] = useState(false);
 	const stakeTokenModalWrapper = useRef(null);
@@ -46,7 +46,7 @@ function EarningsTableRow({ key, projectId, projectName, sales, royalty, revenue
 			</td>
 			{isStakingModalOpen && (
 				<div ref={stakeTokenModalWrapper}>
-					<StakeTokenModal tokenId={projectId} userTokenBalance={1} setIsStakingModalOpen={setIsStakingModalOpen} endTime={Math.floor(Date.now() / 1000)} projectId={projectId} projectName={projectName} tokenPrice={sales} tokenTicker={projectName} />
+					<StakeTokenModal tokenId={projectId} userTokenBalance={1} setIsStakingModalOpen={setIsStakingModalOpen} endTime={Math.floor(Date.now() / 1000)} projectId={projectId} projectName={projectName} tokenPrice={sales} tokenTicker={ticker} />
 				</div>
 			)}
 		</tr>

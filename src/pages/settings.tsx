@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { UserType } from "../types/typings";
-import capitalizeFirstLetter from "../hooks/capitalizeFirstLetter";
 import { signOut, useSession } from "next-auth/react";
 import { trpc } from "../utils/trpc";
 import axios from "axios";
