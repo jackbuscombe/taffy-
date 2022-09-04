@@ -14,8 +14,8 @@ function StakeTokenModal({ setIsStakingModalOpen, tokenId, userTokenBalance, end
 
 	const createStake = trpc.useMutation(["stake.createStake"]);
 	const [tokenBalance, setTokenBalance] = useState(0);
-	const [stakingAmount, setStakingAmount] = useState<number | undefined>();
-	const [currentStakeAmount, setCurrentStakeAmount] = useState<number | undefined>();
+	const [stakingAmount, setStakingAmount] = useState<number>(0);
+	const [currentStakeAmount, setCurrentStakeAmount] = useState<number>(0);
 	const [termsAgreed, setTermsAgreed] = useState(false);
 	const [outputAmount, setOutputAmount] = useState(0);
 	const router = useRouter();

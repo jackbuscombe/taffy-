@@ -16,6 +16,9 @@ import { trpc } from "../utils/trpc";
 import axios from "axios";
 import { utils } from "ethers";
 import BenefitType from "../types/typings";
+import { GetServerSideProps } from "next";
+import { unstable_getServerSession } from "next-auth";
+import { authOptions } from "./api/auth/[...nextauth]";
 
 function NewProject() {
 	const { data: session, status } = useSession();
@@ -189,7 +192,7 @@ function NewProject() {
 			}
 			toast.dismiss();
 			toast.success("Successfully Created Project!");
-			router.push(`/project/${createdProject.createdProject.id}`);
+			router.push(`/project/${createdProject.id}`);
 		} catch (error) {
 			toast.dismiss();
 			console.log("Error Creating project", error);
@@ -1264,3 +1267,22 @@ function NewProject() {
 	);
 }
 export default NewProject;
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+	const session = await unstable_getServerSession(context.req, context.res, authOptions);
+
+	if (!session) {
+		return {
+			redirect: {
+				destination: "/",
+				permanent: false,
+			},
+		};
+	}
+
+	return {
+		props: {
+			session,
+		},
+	};
+};

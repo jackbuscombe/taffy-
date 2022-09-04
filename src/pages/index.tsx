@@ -9,7 +9,7 @@ import { Pulsar } from "@uiball/loaders";
 import { useState } from "react";
 
 const Home: NextPage = () => {
-	const { data: projects, isFetching: fetchingProjects } = trpc.useQuery(["project.getSomeProjects", { amount: 6 }]);
+	const { data: projects, isFetching: fetchingProjects } = trpc.useQuery(["project.getSomeProjects", { amount: 6, status: "all", tags: [] }]);
 	const [trendingProjectsPage, setTrendingProjectsPage] = useState<number>(1);
 	const [upcomingNftDropsPage, setUpcomingNftDropsPage] = useState<number>(1);
 	const router = useRouter();
@@ -69,7 +69,7 @@ const Home: NextPage = () => {
 					{/* Cards */}
 					<div className="w-3/4 self-center grid grid-cols-1 lg:grid-cols-3 gap-4">
 						{projects ? (
-							projects.slice(trendingProjectsPage === 1 ? 0 : 3, trendingProjectsPage === 1 ? 3 : 6).map((project, i: number) => <ProjectCard key={project.id} projectId={project.id} projectName={project.name} projectTicker={project.ticker} bannerImage={project.bannerImage} description={project.description} creatorName={project.creator.name} projectImage={project.image} backers={project._count.contributions} followers={project._count.followers} endDate={project.raiseEndTimestamp} raiseTokenAddress={project.raiseTokenAddress} amountRaised={10} target={project.target} amountStaked={10} nftDrop={false} />)
+							projects.slice(trendingProjectsPage === 1 ? 0 : 3, trendingProjectsPage === 1 ? 3 : 6).map((project, i: number) => <ProjectCard key={project.id} projectId={project.id} projectName={project.name} projectTicker={project.ticker} bannerImage={project.bannerImage} description={project.description} creatorName={project.creator.name} projectImage={project.image} backers={project._count.contributions} followers={project._count.followers} endDate={project.raiseEndTimestamp} raiseTokenAddress={project.raiseTokenAddress} amountRaised={project.amountRaised} target={project.target} amountStaked={project.amountStaked} nftDrop={false} />)
 						) : (
 							<div className="w-full col-span-1 lg:col-span-3 flex justify-center pt-12">
 								<Pulsar size={40} speed={1.75} color="#21c275" />
@@ -111,7 +111,7 @@ const Home: NextPage = () => {
 					{/* Cards */}
 					<div className="w-3/4 self-center grid grid-cols-1 lg:grid-cols-3 gap-4">
 						{projects ? (
-							projects.slice(upcomingNftDropsPage === 1 ? 0 : 3, upcomingNftDropsPage === 1 ? 3 : 6).map((project, i: number) => <ProjectCard key={project.id} projectId={project.id} projectName={project.name} projectTicker={project.ticker} bannerImage={project.bannerImage} description={project.description} creatorName={project.creator.name} projectImage={project.image} backers={project._count.contributions} followers={project._count.followers} endDate={project.raiseEndTimestamp} raiseTokenAddress={project.raiseTokenAddress} amountRaised={10} target={project.target} amountStaked={10} nftDrop={true} />)
+							projects.slice(upcomingNftDropsPage === 1 ? 0 : 3, upcomingNftDropsPage === 1 ? 3 : 6).map((project, i: number) => <ProjectCard key={project.id} projectId={project.id} projectName={project.name} projectTicker={project.ticker} bannerImage={project.bannerImage} description={project.description} creatorName={project.creator.name} projectImage={project.image} backers={project._count.contributions} followers={project._count.followers} endDate={project.raiseEndTimestamp} raiseTokenAddress={project.raiseTokenAddress} amountRaised={project.amountRaised} target={project.target} amountStaked={project.amountStaked} nftDrop={true} />)
 						) : (
 							<div className="w-full col-span-1 lg:col-span-3 flex justify-center pt-12">
 								<Pulsar size={40} speed={1.75} color="#21c275" />
@@ -125,53 +125,3 @@ const Home: NextPage = () => {
 };
 
 export default Home;
-
-// export async function getServerSideProps() {
-// 	let projects: ProjectType[] = [];
-// 	const projectQuery = query(collection(db, "projects"), orderBy("createdTimestamp", "desc"), limit(3));
-// 	const projectQuerySnapshot = await getDocs(projectQuery);
-// 	projectQuerySnapshot.forEach((doc) => {
-// 		projects.push({
-// 			id: doc.id,
-// 			amountStaked: doc.data().amountStaked,
-// 			bannerImage: doc.data().bannerImage,
-// 			contributions: doc.data().contributions,
-// 			contributionsCount: doc.data().contributionsCount,
-// 			contributionsValue: doc.data().contributionsValue,
-// 			createdTimestamp: doc.data().createdTimestamp,
-// 			creatorAddress: doc.data().creatorAddress,
-// 			creatorName: doc.data().creatorName,
-// 			discord: doc.data().discord,
-// 			endDate: doc.data().endDate,
-// 			followers: doc.data().followers,
-// 			followersCount: doc.data().followersCount,
-// 			linkedIn: doc.data().linkedIn,
-// 			projectDescription: doc.data().projectDescription,
-// 			projectImage: doc.data().projectImage,
-// 			projectName: doc.data().projectName,
-// 			projectTicker: doc.data().projectTicker,
-// 			tags: doc.data().tags,
-// 			target: doc.data().target,
-// 			telegram: doc.data().telegram,
-// 			tokenId: doc.data().tokenId,
-// 			tokenPrice: doc.data().tokenPrice,
-// 			twitter: doc.data().twitter,
-// 			views: doc.data().views,
-// 		});
-// 	});
-
-// 	// const nftQuery = query(collection(db, "nfts"), orderBy("timestamp", "desc"), limit(3));
-// 	// const nftResponse = await getDocs(nftQuery);
-
-// 	// const nfts = nftResponse.docs.map((doc) => ({
-// 	// 	id: doc.id,
-// 	// 	...doc.data(),
-// 	// }));
-
-// 	return {
-// 		props: {
-// 			projects,
-// 			// nfts,
-// 		},
-// 	};
-// }

@@ -89,6 +89,8 @@ model Project {
     tokenAddress      String
     tokenSupply       Int            @default(1000000000)
     raiseTokenAddress String         @default("eth")
+    amountRaised      Float          @default(0)
+    amountStaked      Float          @default(0)
     raiseEndTimestamp Int
     views             Int            @default(0)
     proposals         Proposal[]

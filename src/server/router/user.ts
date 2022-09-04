@@ -60,6 +60,8 @@ export const userRouter = createRouter()
 								description: true,
 								raiseTokenAddress: true,
 								raiseEndTimestamp: true,
+								amountRaised: true,
+								amountStaked: true,
 								target: true,
 								_count: {
 									select: {
@@ -80,6 +82,8 @@ export const userRouter = createRouter()
 										image: true,
 										bannerImage: true,
 										raiseTokenAddress: true,
+										amountRaised: true,
+										amountStaked: true,
 										raiseEndTimestamp: true,
 										target: true,
 										creator: {

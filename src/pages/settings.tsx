@@ -7,6 +7,9 @@ import capitalizeFirstLetter from "../hooks/capitalizeFirstLetter";
 import { signOut, useSession } from "next-auth/react";
 import { trpc } from "../utils/trpc";
 import axios from "axios";
+import { GetServerSideProps } from "next";
+import { unstable_getServerSession } from "next-auth";
+import { authOptions } from "./api/auth/[...nextauth]";
 
 function Settings() {
 	const { data: session, status } = useSession();
@@ -211,41 +214,21 @@ function Settings() {
 }
 export default Settings;
 
-// export async function getServerSideProps({ req }: any) {
-// 	let id = "";
-// 	let firstName = "";
-// 	let lastName = "";
-// 	let bio = "";
-// 	let profileImage = "";
-// 	let userCreatedTimestamp = null;
+export const getServerSideProps: GetServerSideProps = async (context) => {
+	const session = await unstable_getServerSession(context.req, context.res, authOptions);
 
-// 	const docRef = doc(db, "users", "0x163290dd5322db5f688b9a90d80817324a185780");
-// 	const docSnap = await getDoc(docRef);
+	if (!session) {
+		return {
+			redirect: {
+				destination: "/",
+				permanent: false,
+			},
+		};
+	}
 
-// 	if (docSnap.exists()) {
-// 		id = docSnap.id;
-// 		firstName = docSnap.data().firstName;
-// 		lastName = docSnap.data().lastName;
-// 		bio = docSnap.data().bio;
-// 		profileImage = docSnap.data().profileImage;
-// 		userCreatedTimestamp = docSnap.data().userCreatedTimestamp;
-
-// 		return {
-// 			props: {
-// 				id,
-// 				firstName,
-// 				lastName,
-// 				bio,
-// 				profileImage,
-// 				userCreatedTimestamp,
-// 			},
-// 		};
-// 	} else {
-// 		return {
-// 			redirect: {
-// 				destination: "/",
-// 				permanent: false,
-// 			},
-// 		};
-// 	}
-// }
+	return {
+		props: {
+			session,
+		},
+	};
+};

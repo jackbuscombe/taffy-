@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import ProjectCard from "../../components/ProjectCard";
 import NftCardExtended from "../../components/NftCardExtended";
 import { useRouter } from "next/router";
@@ -26,7 +26,8 @@ function Project({ id }: { id: string }) {
 	const followProject = trpc.useMutation(["project.followProject"]);
 	const unfollowProject = trpc.useMutation(["project.unfollowProject"]);
 	const { data: isUserFollowing, isFetching: fetchingIsFollowing } = trpc.useQuery(["project.checkIfFollowing", { projectId: id }]);
-	const { data: similarProjects, isFetching: isFetchingSimilarProjects } = trpc.useQuery(["project.getSomeProjects", { amount: 3 }]);
+	const { data: similarProjects, isFetching: isFetchingSimilarProjects } = trpc.useQuery(["project.getSomeProjects", { amount: 3, status: "all", tags: [] }]);
+	const updateViewCount = trpc.useMutation(["project.incrementView"]);
 	const router = useRouter();
 
 	// State for each of the props
@@ -60,6 +61,7 @@ function Project({ id }: { id: string }) {
 	const [userTokenBalance, setUserTokenBalance] = useState(0);
 
 	const [isFollowing, setIsFollowing] = useState<boolean>(false);
+	const [togglingFollowStatus, setTogglingFollowStatus] = useState<boolean>(false);
 	const { data: fetchedTokenBalance, refetch } = useBalance({
 		addressOrName: session?.user?.id,
 		token: tokenId,
@@ -90,17 +92,16 @@ function Project({ id }: { id: string }) {
 		setCreatorAddress(project.creatorId);
 		setCreatorName(project.creator.name);
 		setCreatorImage(project.creator.image);
-		setContributionsValue(10); // Sort this
+		setContributionsValue(project.amountRaised);
 		setTarget(project.target);
 		setSecondsLeft(Math.floor(Date.now() / 1000 - project.raiseEndTimestamp));
 		setTokenId(project.tokenAddress);
 		setTokenPrice(10);
-		setAmountStaked(project._count.stakes); // Sort this
+		setAmountStaked(project.amountStaked);
 		setNfts(project.nfts);
 		setViews(project.views);
 		setContributionsCount(project._count.contributions);
 		setFollowersCount(project._count.followers);
-		// setFollowers(project.followers); // Sort this
 		setTwitter(project.twitter ?? "");
 		setTelegram(project.telegram ?? "");
 		setDiscord(project.discord ?? "");
@@ -115,7 +116,7 @@ function Project({ id }: { id: string }) {
 		if (isUserFollowing) {
 			return setIsFollowing(true);
 		}
-	}, [session, project]);
+	}, [session, project, isUserFollowing]);
 
 	const [selected, setSelected] = useState<string>("overview");
 	const [isBackingModalOpen, setIsBackingModalOpen] = useState<boolean>(false);
@@ -148,50 +149,6 @@ function Project({ id }: { id: string }) {
 
 	const stakeTokenModalWrapper = useRef(null);
 	useOutsideAlerter(stakeTokenModalWrapper);
-
-	// useEffect(() => {
-	// 	if (selected !== "similar") {
-	// 		return;
-	// 	}
-
-	// 	async function getSimilarProjects() {
-	// 		let projects: ProjectType[] = [];
-	// 		const projectQuery = query(collection(db, "projects"), where("id", "!=", id), orderBy("id", "desc"), limit(3));
-	// 		const projectQuerySnapshot = await getDocs(projectQuery);
-
-	// 		projectQuerySnapshot.forEach((doc) => {
-	// 			projects.push({
-	// 				id: doc.id,
-	// 				amountStaked: doc.data().amountStaked,
-	// 				bannerImage: doc.data().bannerImage,
-	// 				contributions: doc.data().contributions,
-	// 				contributionsCount: doc.data().contributionsCount,
-	// 				contributionsValue: doc.data().contributionsValue,
-	// 				createdTimestamp: doc.data().createdTimestamp,
-	// 				creatorAddress: doc.data().creatorAddress,
-	// 				creatorName: doc.data().creatorName,
-	// 				discord: doc.data().discord,
-	// 				endDate: doc.data().endDate,
-	// 				followers: doc.data().followers,
-	// 				followersCount: doc.data().followersCount,
-	// 				linkedIn: doc.data().linkedIn,
-	// 				projectDescription: doc.data().projectDescription,
-	// 				projectImage: doc.data().projectImage,
-	// 				projectName: doc.data().projectName,
-	// 				projectTicker: doc.data().projectTicker,
-	// 				tags: doc.data().tags,
-	// 				target: doc.data().target,
-	// 				telegram: doc.data().telegram,
-	// 				tokenId: doc.data().tokenId,
-	// 				tokenPrice: doc.data().tokenPrice,
-	// 				twitter: doc.data().twitter,
-	// 				views: doc.data().views,
-	// 			});
-	// 		});
-	// 		setSimilarProjects(projects);
-	// 	}
-	// 	getSimilarProjects();
-	// }, [selected]);
 
 	function useOutsideAlerter(ref: any) {
 		useEffect(() => {
@@ -236,16 +193,27 @@ function Project({ id }: { id: string }) {
 			return;
 		}
 
-		if (isFollowing) {
-			const unfollowedProject = await unfollowProject.mutateAsync({ projectId: id });
-			if (unfollowedProject) setIsFollowing(false);
+		try {
+			setTogglingFollowStatus(true);
+			if (isFollowing) {
+				const followingToast = toast.loading("Unfollowing");
+				await unfollowProject.mutateAsync({ projectId: id });
+				setIsFollowing(false);
+				toast.dismiss();
+				toast.success(`Unfollowed ${projectName}`, {
+					id: followingToast,
+				});
+			} else {
+				await followProject.mutateAsync({ projectId: id });
+				setIsFollowing(true);
+				toast.dismiss();
+				toast.success(`Following ${projectName}`);
+			}
+		} catch (error) {
 			toast.dismiss();
-			toast(`Unfollowed ${projectName}`);
-		} else {
-			const followedProject = await followProject.mutateAsync({ projectId: id });
-			if (followedProject) setIsFollowing(true);
-			toast.dismiss();
-			toast.success(`Following ${projectName}`);
+			toast.error("Unable to update following status");
+		} finally {
+			setTogglingFollowStatus(false);
 		}
 	};
 
@@ -263,6 +231,14 @@ function Project({ id }: { id: string }) {
 
 		setUserTokenBalance(parseFloat(fetchedTokenBalance.formatted));
 	}, [fetchedTokenBalance]);
+
+	// Update View count
+	let incrementedView = false;
+	useEffect(() => {
+		if (incrementedView) return;
+		incrementedView = true;
+		updateViewCount.mutate({ projectId: id });
+	}, [incrementedView]);
 
 	return (
 		<main className={``}>
@@ -298,8 +274,9 @@ function Project({ id }: { id: string }) {
 									<img src={projectImage} alt="" className="h-6 w-6 rounded-full mr-2 object-cover" />
 									{amountStaked && amountStaked.toLocaleString()} {raiseTokenData?.symbol ?? "ETH"} Staked
 								</button>
-								<button onClick={toggleFollowing} className="flex bg-green-500 text-white font-semibold rounded-md px-4 py-1 hover:bg-green-600 transition transform ease-in-out border-[1px] shadow-2xl">
-									{isFollowing ? "Following" : "Follow"}
+								<button onClick={toggleFollowing} className="flex bg-green-500 text-white items-center font-semibold rounded-md px-4 py-1 hover:bg-green-600 transition transform ease-in-out border-[1px] shadow-2xl">
+									{togglingFollowStatus || fetchingIsFollowing ? <Pulsar size={20} speed={1.75} color="white" /> : isFollowing ? "Following" : "Follow"}
+									{/* {isUserFollowing ? "Following" : "Follow"} */}
 								</button>
 							</div>
 						)}
@@ -410,11 +387,11 @@ function Project({ id }: { id: string }) {
 								</div>
 								<div className="flex items-center space-x-2 text-sm">
 									<UserGroupIcon className="h-5 w-5" />
-									<p>{followersCount} followers</p>
+									<p>{`${followersCount ?? ""} ${followersCount === 1 ? "follower" : "followers"}`}</p>
 								</div>
 								<div className="flex items-center space-x-2 text-sm">
 									<EyeIcon className="h-5 w-5" />
-									<p>{views} views</p>
+									<p>{`${views ?? ""} ${views === 1 ? "view" : "views"}`}</p>
 								</div>
 								<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 text-sm">
 									{twitter && (
@@ -607,7 +584,7 @@ function Project({ id }: { id: string }) {
 						</div>
 					</div>
 				) : selected == "similar" ? (
-					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-2/3 justify-between my-4">{similarProjects && similarProjects.map((project, i) => <ProjectCard key={project.id} projectId={project.id} projectName={project.name} projectTicker={project.ticker} bannerImage={project.bannerImage} description={project.description} creatorName={project.creator.name} projectImage={project.image} raiseTokenAddress={raiseTokenAddress} backers={project._count.contributions} followers={project._count.followers} endDate={project.raiseEndTimestamp} amountRaised={10} target={project.target} amountStaked={10} nftDrop={true} />)}</div>
+					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-2/3 justify-between my-4">{similarProjects && similarProjects.map((project, i) => <ProjectCard key={project.id} projectId={project.id} projectName={project.name} projectTicker={project.ticker} bannerImage={project.bannerImage} description={project.description} creatorName={project.creator.name} projectImage={project.image} raiseTokenAddress={raiseTokenAddress} backers={project._count.contributions} followers={project._count.followers} endDate={project.raiseEndTimestamp} amountRaised={project.amountRaised} target={project.target} amountStaked={project.amountStaked} nftDrop={true} />)}</div>
 				) : (
 					<div className="flex space-x-6 w-2/3 justify-between my-4">
 						<p>Please select a tab.</p>

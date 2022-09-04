@@ -1,6 +1,5 @@
 import { createProtectedRouter } from "./protected-router";
 import { z } from "zod";
-import { resolve } from "path";
 
 const traitSchema = z.object({
 	traitName: z.string(),
@@ -25,6 +24,20 @@ export const protectedContributionRouter = createProtectedRouter()
 					},
 				});
 				console.log("Created Contribution: ", createdContribtuion);
+				try {
+					await ctx.prisma.project.update({
+						where: {
+							id: input.projectId,
+						},
+						data: {
+							amountRaised: {
+								increment: input.amount,
+							},
+						},
+					});
+				} catch (error) {
+					console.log("Error incrementing amount raised", error);
+				}
 				return createdContribtuion;
 			} catch (error) {
 				console.log(error);

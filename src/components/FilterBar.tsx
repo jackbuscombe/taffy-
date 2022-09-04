@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 type FilterBarProps = {
-	filterName: any;
+	filterName: "Projects" | "NFTs";
 	status: any;
 	setStatus: any;
 	categories: any;
@@ -39,64 +39,93 @@ function FilterBar({ filterName, status, setStatus, categories, setCategories, s
 					</div>
 					<div onClick={() => setStatus("upcoming")} className="flex space-x-2 items-center cursor-pointer">
 						<input checked={status === "upcoming"} type="radio" className="cursor-pointer" />
-						<p>Upcoming games</p>
+						<p>{filterName === "Projects" ? "Currently raising" : filterName === "NFTs" ? "Upcoming mint" : "Upcoming"}</p>
 					</div>
 					<div onClick={() => setStatus("released")} className="flex space-x-2 items-center cursor-pointer">
 						<input checked={status === "released"} type="radio" className="cursor-pointer" />
-						<p>Already released</p>
+						<p>{filterName === "Projects" ? "Raising finished" : filterName === "NFTs" ? "Already minted" : "Released"}</p>
 					</div>
 				</div>
 
-				<h3 className="font-semibold my-4">Categories</h3>
-				<div className="flex flex-col space-y-3 text-sm pb-4 border-b-[1px]">
-					<div className="flex space-x-2 items-center cursor-pointer">
-						<input onChange={handleCategoryChange} value={"art"} type="checkbox" className="cursor-pointer" />
-						<p>Art</p>
-					</div>
-					<div className="flex space-x-2 items-center cursor-pointer">
-						<input onChange={handleCategoryChange} value={"celebrities"} type="checkbox" className="cursor-pointer" />
-						<p>Celebrities</p>
-					</div>
-					<div className="flex space-x-2 items-center cursor-pointer">
-						<input onChange={handleCategoryChange} value={"gaming"} type="checkbox" className="cursor-pointer" />
-						<p>Gaming</p>
-					</div>
-					<div className="flex space-x-2 items-center cursor-pointer">
-						<input onChange={handleCategoryChange} value={"sport"} type="checkbox" className="cursor-pointer" />
-						<p>Sport</p>
-					</div>
-					<div className="flex space-x-2 items-center cursor-pointer">
-						<input onChange={handleCategoryChange} value={"music"} type="checkbox" className="cursor-pointer" />
-						<p>Music</p>
-					</div>
-					<div className="flex space-x-2 items-center cursor-pointer">
-						<input onChange={handleCategoryChange} value={"crypto"} type="checkbox" className="cursor-pointer" />
-						<p>Crypto</p>
-					</div>
-					<div className="flex space-x-2 items-center cursor-pointer">
-						<input onChange={handleCategoryChange} value={"cross_chain"} type="checkbox" className="cursor-pointer" />
-						<p>Cross Chain</p>
-					</div>
-				</div>
+				{filterName === "Projects" && (
+					<>
+						<h3 className="font-semibold my-4">Categories</h3>
+						<div className="flex flex-col space-y-3 text-sm pb-4 border-b-[1px]">
+							<div className="flex space-x-2 items-center cursor-pointer">
+								<input onChange={handleCategoryChange} value={"art"} type="checkbox" className="cursor-pointer" />
+								<p>Art</p>
+							</div>
+							<div className="flex space-x-2 items-center cursor-pointer">
+								<input onChange={handleCategoryChange} value={"celebrities"} type="checkbox" className="cursor-pointer" />
+								<p>Celebrities</p>
+							</div>
+							<div className="flex space-x-2 items-center cursor-pointer">
+								<input onChange={handleCategoryChange} value={"gaming"} type="checkbox" className="cursor-pointer" />
+								<p>Gaming</p>
+							</div>
+							<div className="flex space-x-2 items-center cursor-pointer">
+								<input onChange={handleCategoryChange} value={"sport"} type="checkbox" className="cursor-pointer" />
+								<p>Sport</p>
+							</div>
+							<div className="flex space-x-2 items-center cursor-pointer">
+								<input onChange={handleCategoryChange} value={"music"} type="checkbox" className="cursor-pointer" />
+								<p>Music</p>
+							</div>
+							<div className="flex space-x-2 items-center cursor-pointer">
+								<input onChange={handleCategoryChange} value={"crypto"} type="checkbox" className="cursor-pointer" />
+								<p>Crypto</p>
+							</div>
+							<div className="flex space-x-2 items-center cursor-pointer">
+								<input onChange={handleCategoryChange} value={"cross_chain"} type="checkbox" className="cursor-pointer" />
+								<p>Cross Chain</p>
+							</div>
+						</div>
+					</>
+				)}
 
 				<h3 className="font-semibold my-4">Sort by</h3>
 				<div className="flex flex-col space-y-3 text-sm pb-4 border-b-[1px]">
-					<div onClick={() => setSortBy("time")} className="flex space-x-2 items-center cursor-pointer">
-						<input checked={sortBy === "time"} type="radio" className="cursor-pointer" />
-						<p>Time Remaining</p>
-					</div>
-					<div onClick={() => setSortBy("backers")} className="flex space-x-2 items-center cursor-pointer">
-						<input checked={sortBy === "backers"} type="radio" className="cursor-pointer" />
-						<p>Number of backers</p>
-					</div>
-					<div onClick={() => setSortBy("raised")} className="flex space-x-2 items-center cursor-pointer">
-						<input checked={sortBy === "raised"} type="radio" className="cursor-pointer" />
-						<p>Amount raise</p>
-					</div>
-					<div onClick={() => setSortBy("followers")} className="flex space-x-2 items-center cursor-pointer">
-						<input checked={sortBy === "followers"} type="radio" className="cursor-pointer" />
-						<p>Followers</p>
-					</div>
+					{filterName === "Projects" ? (
+						<>
+							<div onClick={() => setSortBy("time")} className="flex space-x-2 items-center cursor-pointer">
+								<input checked={sortBy === "time"} type="radio" className="cursor-pointer" />
+								<p>Time Remaining</p>
+							</div>
+							<div onClick={() => setSortBy("backers")} className="flex space-x-2 items-center cursor-pointer">
+								<input checked={sortBy === "backers"} type="radio" className="cursor-pointer" />
+								<p>Number of backers</p>
+							</div>
+							<div onClick={() => setSortBy("raised")} className="flex space-x-2 items-center cursor-pointer">
+								<input checked={sortBy === "raised"} type="radio" className="cursor-pointer" />
+								<p>Amount raised</p>
+							</div>
+							<div onClick={() => setSortBy("followers")} className="flex space-x-2 items-center cursor-pointer">
+								<input checked={sortBy === "followers"} type="radio" className="cursor-pointer" />
+								<p>Followers</p>
+							</div>
+						</>
+					) : filterName === "NFTs" ? (
+						<>
+							<div onClick={() => setSortBy("time")} className="flex space-x-2 items-center cursor-pointer">
+								<input checked={sortBy === "time"} type="radio" className="cursor-pointer" />
+								<p>Time Until Mint</p>
+							</div>
+							<div onClick={() => setSortBy("views")} className="flex space-x-2 items-center cursor-pointer">
+								<input checked={sortBy === "views"} type="radio" className="cursor-pointer" />
+								<p>Views</p>
+							</div>
+							<div onClick={() => setSortBy("backers")} className="flex space-x-2 items-center cursor-pointer">
+								<input checked={sortBy === "backers"} type="radio" className="cursor-pointer" />
+								<p>Number of backers</p>
+							</div>
+							<div onClick={() => setSortBy("followers")} className="flex space-x-2 items-center cursor-pointer">
+								<input checked={sortBy === "followers"} type="radio" className="cursor-pointer" />
+								<p>Followers</p>
+							</div>
+						</>
+					) : (
+						<></>
+					)}
 				</div>
 			</div>
 		</div>

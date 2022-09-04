@@ -11,10 +11,14 @@ type NftPageType = {
 };
 
 function Nfts() {
-	const { data: nfts, isFetching: fetchingNfts } = trpc.useQuery(["nft.getSomeNfts", { amount: 12 }]);
 	const [status, setStatus] = useState("all");
-	const [categories, setCategories] = useState([]);
+	const [categories, setCategories] = useState<string[]>([]);
 	const [sortBy, setSortBy] = useState("time");
+	const { data: nfts, refetch: refetchNfts, isFetching: fetchingNfts } = trpc.useQuery(["nft.getSomeNfts", { amount: 12, status: status, sortBy: sortBy }]);
+
+	useEffect(() => {
+		refetchNfts();
+	}, [sortBy, status]);
 
 	return (
 		<div className="flex w-full justify-center bg-[#f3f6fc] py-12">
@@ -27,16 +31,24 @@ function Nfts() {
 
 					{/* Main */}
 					<div className="col-span-5 sm:col-span-3 md:col-span-4">
-						{fetchingNfts ? (
+						{!nfts ? (
 							<div className="w-full flex justify-center pt-12">
 								<Pulsar size={40} speed={1.75} color="#21c275" />
 							</div>
 						) : (
-							<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-12">
-								{nfts?.map((nft, i: number) => (
-									<NftCardExtended key={nft.id} id={nft.id} nftUrl={nft.nftUrl} nftName={nft.name} projectName={nft.project?.name ?? nft.name} price={10} creatorImage={nft.creator.image} creatorName={nft.creator.name} />
-								))}
-							</div>
+							<>
+								{nfts && fetchingNfts && (
+									<div className="w-full flex justify-center items-center py-2">
+										<Pulsar size={40} speed={1.75} color="#21c275" />
+										<h2 className="text-lg font-semibold">Fetching NFTs...</h2>
+									</div>
+								)}
+								<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-12">
+									{nfts.map((nft, i: number) => (
+										<NftCardExtended key={nft.id} id={nft.id} nftUrl={nft.nftUrl} nftName={nft.name} projectName={nft.project?.name ?? nft.name} price={10} creatorImage={nft.creator.image} creatorName={nft.creator.name} />
+									))}
+								</div>
+							</>
 						)}
 
 						{nfts && nfts.length > 12 && <PaginationBar />}

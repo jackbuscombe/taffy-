@@ -1,16 +1,20 @@
 import { PlusIcon } from "@heroicons/react/solid";
 import { Nft } from "@prisma/client";
 import { Pulsar } from "@uiball/loaders";
+import { GetServerSideProps } from "next";
+import { unstable_getServerSession } from "next-auth";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { useToken } from "wagmi";
 import NftCard from "../../components/NftCard";
 import VotingCard from "../../components/VotingCard";
 import capitalizeFirstLetter from "../../hooks/capitalizeFirstLetter";
 import secondsToDhms from "../../hooks/secondsToDhms";
 import unixToDateTime from "../../hooks/unixToDateTime";
 import { trpc } from "../../utils/trpc";
+import { authOptions } from "../api/auth/[...nextauth]";
 
 function Admin({ id }: { id: string } /*{ id, projectName, projectTicker, projectImage, bannerImage, endDate, ended, contributionsValue, target, secondsLeft, tokenId, tokenPrice, amountStaked, views, contributionsCount, followersCount, proposals, upcomingNfts, releasedNfts }: AdminPageType*/) {
 	const { data: session, status } = useSession();
@@ -20,6 +24,14 @@ function Admin({ id }: { id: string } /*{ id, projectName, projectTicker, projec
 	const [upcomingNftArray, setUpcomingNftArray] = useState<any>([]);
 	const [releasedNftArray, setReleasedNftArray] = useState<any>([]);
 	const [timeLeft, setTimeLeft] = useState<string>("");
+	const {
+		data: raiseTokenData,
+		isError,
+		isLoading,
+	} = useToken({
+		address: project?.raiseTokenAddress,
+		enabled: !!project?.raiseTokenAddress,
+	});
 
 	useEffect(() => {
 		if (!project) return;
@@ -69,7 +81,7 @@ function Admin({ id }: { id: string } /*{ id, projectName, projectTicker, projec
 						<img src={project.image} alt="" className="h-16 w-16 rounded-full" />
 						<div className="">
 							<Link href={`/project/${id}`}>
-								<a className="text-lg font-semibold hover:underline cursor-pointer">{capitalizeFirstLetter(project.name)}</a>
+								<a className="text-lg font-semibold hover:underline cursor-pointer">{project.name}</a>
 							</Link>
 							<p className="text-gray-400 font-light">{project.ticker.toUpperCase()}</p>
 						</div>
@@ -84,7 +96,7 @@ function Admin({ id }: { id: string } /*{ id, projectName, projectTicker, projec
 							<p className="text-sm text-gray-400">Token Price</p>
 						</div>
 						<div className="flex flex-col col-span-1 justify-center">
-							<p className="text-lg font-semibold">{10}</p>
+							<p className="text-lg font-semibold">{project.amountStaked}</p>
 							<p className="text-sm text-gray-400">{project.ticker.toUpperCase()} Staked</p>
 						</div>
 					</div>
@@ -189,8 +201,8 @@ function Admin({ id }: { id: string } /*{ id, projectName, projectTicker, projec
 						{project.proposals && project.proposals.length > 0 && (
 							<>
 								<h2 className="text-2xl text-gray-800 font-bold mb-5">Active Proposals</h2>
-								{project.proposals.map((proposal: any, i: number) => (
-									<VotingCard key={proposal.id} proposalId={proposal.id} title={proposal.title} description={proposal.description} question={proposal.question} options={proposal.options} projectId={proposal.projectId} projectName={proposal.projectName} projectTicker={proposal.projectTicker} projectImage={proposal.projectImage} timeLeft={unixToDateTime(proposal.votingCloseTimestamp, "local")} />
+								{project.proposals.map((proposal, i: number) => (
+									<VotingCard key={proposal.id} proposalId={proposal.id} title={proposal.title} description={proposal.description ?? ""} question={proposal.question} options={proposal.options} projectId={proposal.projectId} projectName={project.name} projectTicker={project.ticker} projectImage={project.image} timeLeft={unixToDateTime(proposal.votingCloseTimestamp, "local")} />
 								))}
 							</>
 						)}
@@ -207,12 +219,16 @@ function Admin({ id }: { id: string } /*{ id, projectName, projectTicker, projec
 
 						<div className="flex flex-col md:flex-row space-x-4 py-4">
 							<p className="font-semibold">Amount Raised:</p>
-							<p>{10} ETH</p>
+							<p>
+								{project.amountRaised} {raiseTokenData?.symbol.toUpperCase()}
+							</p>
 						</div>
 
 						<div className="flex flex-col md:flex-row space-x-4 py-4">
 							<p className="font-semibold">Target:</p>
-							<p>{project.target} ETH</p>
+							<p>
+								{project.target} {raiseTokenData?.symbol.toUpperCase()}
+							</p>
 						</div>
 
 						<div className="flex flex-col md:flex-row space-x-4 py-4">
@@ -228,7 +244,7 @@ function Admin({ id }: { id: string } /*{ id, projectName, projectTicker, projec
 						<div className="flex flex-col md:flex-row space-x-4 py-4">
 							<p className="font-semibold">Amount Staked:</p>
 							<p>
-								{10} {project.ticker.toUpperCase()}
+								{project.amountStaked} {project.ticker.toUpperCase()}
 							</p>
 						</div>
 					</div>
@@ -238,7 +254,7 @@ function Admin({ id }: { id: string } /*{ id, projectName, projectTicker, projec
 							<h2 className="text-2xl text-gray-800 font-bold mb-5">About</h2>
 							<div className="flex flex-col md:flex-row space-x-4 py-4">
 								<p className="font-semibold">Project Name:</p>
-								<p>{capitalizeFirstLetter(project.name)}</p>
+								<p>{project.name}</p>
 							</div>
 						</div>
 
@@ -273,7 +289,7 @@ function Admin({ id }: { id: string } /*{ id, projectName, projectTicker, projec
 							<h2 className="text-2xl text-gray-800 font-bold mb-5">About</h2>
 							<div className="flex flex-col md:flex-row space-x-4 py-4">
 								<p className="font-semibold">Project Name:</p>
-								<p>{capitalizeFirstLetter(project.name)}</p>
+								<p>{project.name}</p>
 							</div>
 						</div>
 
@@ -309,107 +325,23 @@ function Admin({ id }: { id: string } /*{ id, projectName, projectTicker, projec
 }
 export default Admin;
 
-export async function getServerSideProps(context: any) {
-	const id = context.params.id;
+export const getServerSideProps: GetServerSideProps = async (context) => {
+	const id = context.params?.id;
+	const session = await unstable_getServerSession(context.req, context.res, authOptions);
+
+	if (!session || !id) {
+		return {
+			redirect: {
+				destination: "/",
+				permanent: false,
+			},
+		};
+	}
 
 	return {
 		props: {
+			session,
 			id,
 		},
 	};
-
-	// // let projectDetails: ProjectType = {};
-	// const docSnap = await getDoc(doc(db, "projects", id));
-
-	// if (docSnap.exists()) {
-	// 	const amountStaked = docSnap.data().amountStaked;
-	// 	const bannerImage = docSnap.data().bannerImage;
-	// 	const contributions = docSnap.data().contributions;
-	// 	const contributionsCount = docSnap.data().contributionsCount;
-	// 	const contributionsValue = docSnap.data().contributionsValue;
-	// 	const createdTimestamp = docSnap.data().createdTimestamp;
-	// 	const creatorAddress = docSnap.data().creatorAddress;
-	// 	const creatorName = docSnap.data().creatorName;
-	// 	const discord = docSnap.data().discord;
-	// 	const endDate = docSnap.data().endDate;
-	// 	const followers = docSnap.data().followers;
-	// 	const followersCount = docSnap.data().followersCount;
-	// 	const linkedIn = docSnap.data().linkedIn;
-	// 	const projectDescription = docSnap.data().projectDescription;
-	// 	const projectImage = docSnap.data().projectImage;
-	// 	const projectName = docSnap.data().projectName;
-	// 	const projectTicker = docSnap.data().projectTicker;
-	// 	const tags = docSnap.data().tags;
-	// 	const target = docSnap.data().target;
-	// 	const telegram = docSnap.data().telegram;
-	// 	const tokenId = docSnap.data().tokenId;
-	// 	const tokenPrice = docSnap.data().tokenPrice;
-	// 	const twitter = docSnap.data().twitter;
-	// 	const views = docSnap.data().views;
-
-	// 	const ended = Date.now() / 1000 > docSnap.data().endDate;
-	// 	const secondsLeft = secondsToDhms(endDate - Date.now() / 1000);
-
-	// 	let upcomingNfts: any = [];
-	// 	let releasedNfts: any = [];
-	// 	const nftQuery = query(collection(db, "nfts"), where("projectId", "==", id));
-	// 	const nftQuerySnapshot = await getDocs(nftQuery);
-	// 	nftQuerySnapshot.forEach((doc) => {
-	// 		if (doc.data().mintTimestamp > Date.now() / 1000) {
-	// 			upcomingNfts.push({ id: doc.id, ...doc.data() });
-	// 		} else if (doc.data().mintTimestamp < Date.now() / 1000) {
-	// 			releasedNfts.push({ id: doc.id, ...doc.data() });
-	// 		}
-	// 	});
-
-	// 	// Get Project Proposals
-	// 	let proposals: ProposalType[] = [];
-	// 	const proposalQuery = query(collection(db, "proposals"), where("projectId", "==", id));
-	// 	const proposalQuerySnapshot = await getDocs(proposalQuery);
-	// 	proposalQuerySnapshot.forEach((doc) => {
-	// 		proposals.push({
-	// 			id: doc.id,
-	// 			description: doc.data().description,
-	// 			options: doc.data().options,
-	// 			projectId: doc.data().projectId,
-	// 			projectImage: doc.data().projectImage,
-	// 			projectName: doc.data().projectName,
-	// 			projectTicker: doc.data().projectTicker,
-	// 			question: doc.data().question,
-	// 			title: doc.data().title,
-	// 			votingCloseTimestamp: doc.data().votingCloseTimestamp,
-	// 		});
-	// 	});
-
-	// 	return {
-	// 		props: {
-	// 			id,
-	// 			projectName,
-	// 			projectTicker,
-	// 			projectImage,
-	// 			bannerImage,
-	// 			endDate,
-	// 			ended,
-	// 			contributionsValue,
-	// 			target,
-	// 			secondsLeft,
-	// 			tokenId,
-	// 			tokenPrice,
-	// 			amountStaked,
-	// 			views,
-	// 			contributionsCount,
-	// 			followersCount,
-	// 			upcomingNfts,
-	// 			releasedNfts,
-	// 			proposals,
-	// 		},
-	// 	};
-	// } else {
-	// 	return {
-	// 		redirect: {
-	// 			destination: "/",
-	// 			permanent: false,
-	// 		},
-	// 	};
-	// }
-}
+};

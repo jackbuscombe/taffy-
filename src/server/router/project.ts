@@ -1,18 +1,102 @@
 import { createRouter } from "./context";
 import { z } from "zod";
 
+type upcomingStatusType = {
+	raiseEndTimestamp: {
+		gt: number;
+	};
+};
+
+type releasedStatusType = {
+	raiseEndTimestamp: {
+		lt: number;
+	};
+};
+
+type sortByCreatedTimeType = {
+	createdTimestamp: "asc" | "desc";
+};
+type sortByBackersType = {
+	contributions: {
+		_count: "asc" | "desc";
+	};
+};
+type sortByFollowersType = {
+	followers: {
+		_count: "asc" | "desc";
+	};
+};
+
 export const projectRouter = createRouter()
 	.query("getSomeProjects", {
 		input: z.object({
 			amount: z.number(),
+			status: z.string(),
+			tags: z.array(z.string()),
+			sortBy: z.string().optional(),
 		}),
 		async resolve({ ctx, input }) {
-			const projects = await ctx.prisma.project.findMany({
-				orderBy: [
-					{
-						createdTimestamp: "desc",
+			let status: upcomingStatusType | releasedStatusType;
+			if (input.status === "upcoming") {
+				status = {
+					raiseEndTimestamp: {
+						gt: Math.floor(Date.now() / 1000),
 					},
-				],
+				};
+			} else if (input.status === "released") {
+				status = {
+					raiseEndTimestamp: {
+						lt: Math.floor(Date.now() / 1000),
+					},
+				};
+			} else {
+				status = {
+					raiseEndTimestamp: {
+						gt: 0,
+					},
+				};
+			}
+
+			let sortBy: sortByCreatedTimeType | sortByBackersType | sortByFollowersType;
+			if (input.sortBy === "time") {
+				sortBy = {
+					createdTimestamp: "desc",
+				};
+			} else if (input.sortBy === "backers") {
+				sortBy = {
+					contributions: {
+						_count: "desc",
+					},
+				};
+			} else if (input.sortBy === "raised") {
+				sortBy = {
+					contributions: {
+						_count: "desc",
+					},
+				};
+			} else if (input.sortBy === "followers") {
+				sortBy = {
+					followers: {
+						_count: "desc",
+					},
+				};
+			} else {
+				sortBy = {
+					createdTimestamp: "desc",
+				};
+			}
+			// This is how we conditionally make the 'where' work, such that empty arrays return all projects
+			const tagsFilter =
+				input.tags.length > 0
+					? {
+							tags: {
+								hasSome: input.tags,
+							},
+					  }
+					: {};
+			const projects = await ctx.prisma.project.findMany({
+				orderBy: sortBy,
+				where: tagsFilter && status,
 				take: input.amount,
 				include: {
 					creator: {
@@ -113,59 +197,26 @@ export const projectRouter = createRouter()
 			}
 		},
 	})
-	.query("getAmountRaisedForSpecificProject", {
+	.mutation("incrementView", {
 		input: z.object({
 			projectId: z.string(),
 		}),
 		async resolve({ ctx, input }) {
 			try {
-				const amountRaised = ctx.prisma.project.findUnique({
+				await ctx.prisma.project.update({
 					where: {
 						id: input.projectId,
 					},
-					include: {
-						contributions: {
-							select: {
-								amount: true,
-							},
+					data: {
+						views: {
+							increment: 1,
 						},
 					},
 				});
-				console.log("Amount Raise: ", amountRaised);
-				return amountRaised;
+				return;
 			} catch (error) {
-				console.log(error);
+				console.log("Error incrementing Views", error);
 				return;
 			}
 		},
 	});
-// .query("getNftsFromCollection", {
-// 	input: z.object({
-// 		projectId: z.string(),
-// 	}),
-// 	async resolve({ctx, input}) {
-// 		try {
-// 			const projectNfts = await ctx.prisma.nft.findMany({
-// 				where: {
-// 					projectId: input.projectId,
-// 				},
-// 				include: {
-// 					project: {
-// 						select: {
-// 							name: true,
-// 						},
-// 					},
-// 					creator: {
-// 						select: {
-// 							name: true,
-// 							image: true,
-// 						},
-// 					},
-// 				},
-// 			});
-// 		} catch (error) {
-// 			console.log(error);
-// 			return;
-// 		}
-// 	}
-// })

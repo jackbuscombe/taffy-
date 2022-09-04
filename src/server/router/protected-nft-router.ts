@@ -50,9 +50,7 @@ export const protectedNftRouter = createProtectedRouter()
 					},
 				});
 
-				return {
-					createdNft,
-				};
+				return createdNft;
 			} catch (error) {
 				console.log(error);
 				return;

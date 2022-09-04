@@ -10,6 +10,9 @@ import deployNft from "../utils/deployNft";
 import axios from "axios";
 import { Project } from "@prisma/client";
 import { Beneficiary } from "../types/typings";
+import { unstable_getServerSession } from "next-auth/next";
+import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
+import { authOptions } from "../pages/api/auth/[...nextauth]";
 
 type TraitType = {
 	traitName: string;
@@ -169,7 +172,7 @@ function Mint() {
 				const deployedNft = await deployNft(name.current.value, name.current.value);
 				console.log("Deployed NFT", deployedNft);
 
-				const updatedNft = await updateNftAddress.mutateAsync({ id: createdNft.createdNft.id, address: deployedNft?.creates ?? "Unable to get NFT Address" });
+				const updatedNft = await updateNftAddress.mutateAsync({ id: createdNft.id, address: deployedNft?.creates ?? "Unable to get NFT Address" });
 				console.log("Updated NFT", updatedNft);
 
 				if (!updatedNft) {
@@ -179,13 +182,13 @@ function Mint() {
 				}
 				toast.dismiss();
 				toast.success("Successfully Minted NFT!");
-				return router.push(`/nft/${createdNft.createdNft.id}`);
+				return router.push(`/nft/${createdNft.id}`);
 			}
 			toast((t) => (
 				<span>
 					<b>NFT successfully created</b>
 					<button onClick={() => router.reload()}>Create another Nft</button>
-					<button onClick={() => router.push(`/nft/${createdNft.createdNft.id}`)}>Take me to this NFT</button>
+					<button onClick={() => router.push(`/nft/${createdNft.id}`)}>Take me to this NFT</button>
 					<button onClick={() => toast.dismiss(t.id)}>Dismiss</button>
 				</span>
 			));
@@ -625,3 +628,22 @@ function Mint() {
 	);
 }
 export default Mint;
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+	const session = await unstable_getServerSession(context.req, context.res, authOptions);
+
+	if (!session) {
+		return {
+			redirect: {
+				destination: "/",
+				permanent: false,
+			},
+		};
+	}
+
+	return {
+		props: {
+			session,
+		},
+	};
+};

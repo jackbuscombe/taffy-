@@ -13,6 +13,7 @@ import { trpc } from "../../utils/trpc";
 function Nft({ id }: { id: string }) {
 	const router = useRouter();
 	const { data: nft } = trpc.useQuery(["nft.getSpecificNft", { id: id }]);
+	const updateViewCount = trpc.useMutation(["nft.incrementView"]);
 	const { data: nftCollection } = trpc.useQuery(["nft.getNftsFromCollection", { projectId: nft?.projectId as string }], {
 		enabled: !!nft?.projectId,
 	});
@@ -56,6 +57,14 @@ function Nft({ id }: { id: string }) {
 		setChain(nft.chainId);
 	}, [nft]);
 
+	// Update View count
+	let incrementedView = false;
+	useEffect(() => {
+		if (incrementedView) return;
+		incrementedView = true;
+		updateViewCount.mutate({ nftId: id });
+	}, [incrementedView]);
+
 	return (
 		<main className="flex flex-col items-center space-y-6 bg-blue-50 w-full py-8">
 			<div className="w-3/4 justify-center grid sm:grid-cols-2 gap-6 grid-flow-row-dense h-fit">
@@ -97,7 +106,7 @@ function Nft({ id }: { id: string }) {
 						</div>
 						<div className="flex items-center text-center space-x-2 text-gray-600">
 							<EyeIcon className="h-6 w-6" />
-							<p>{views} views</p>
+							<p>{`${views ?? ""} ${views === 1 ? "view" : "views"}`}</p>
 						</div>
 					</div>
 

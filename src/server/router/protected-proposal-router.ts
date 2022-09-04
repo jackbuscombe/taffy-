@@ -43,9 +43,7 @@ export const protectedProposalRouter = createProtectedRouter()
 				});
 				console.log("Newly created Proposal is", createdProposal);
 
-				return {
-					createdProposal,
-				};
+				return createdProposal;
 			} catch (error) {
 				console.log(error);
 				return;

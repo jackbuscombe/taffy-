@@ -98,7 +98,7 @@ function Profile({ id }: { id: string } /*{ userDetails, contributions, nftArray
 							<h2 className="text-xl font-semibold">Projects Created</h2>
 							<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full justify-between my-4">
 								{user.projects.map((project, i) => (
-									<ProjectCard key={project.id} projectId={project.id} projectName={project.name} projectTicker={project.ticker} bannerImage={project.bannerImage} description={project.description} raiseTokenAddress={project.raiseTokenAddress} creatorName={user.name} projectImage={project.image} backers={project._count.contributions} followers={project._count.followers} endDate={project.raiseEndTimestamp} amountRaised={10} target={project.target} amountStaked={10} nftDrop={false} />
+									<ProjectCard key={project.id} projectId={project.id} projectName={project.name} projectTicker={project.ticker} bannerImage={project.bannerImage} description={project.description} raiseTokenAddress={project.raiseTokenAddress} creatorName={user.name} projectImage={project.image} backers={project._count.contributions} followers={project._count.followers} endDate={project.raiseEndTimestamp} amountRaised={project.amountRaised} target={project.target} amountStaked={project.amountStaked} nftDrop={false} />
 								))}
 							</div>
 						</div>
@@ -108,7 +108,7 @@ function Profile({ id }: { id: string } /*{ userDetails, contributions, nftArray
 							<h2 className="text-xl font-semibold">Projects Backed</h2>
 							<div className="grid grid-cols-3 gap-3 space-x-6 justify-between">
 								{user.contributions.map((contribution, i: number) => (
-									<ProjectCard key={contribution.Project.id} projectId={contribution.Project.id} projectName={contribution.Project.name} projectTicker={contribution.Project.ticker} bannerImage={contribution.Project.bannerImage} description={contribution.Project.description} raiseTokenAddress={contribution.Project.raiseTokenAddress} creatorName={contribution.Project.creator.name} projectImage={contribution.Project.image} backers={contribution.Project._count.contributions} followers={contribution.Project._count.followers} endDate={contribution.Project.raiseEndTimestamp} amountRaised={10} target={contribution.Project.target} amountStaked={10} nftDrop={true} />
+									<ProjectCard key={contribution.Project.id} projectId={contribution.Project.id} projectName={contribution.Project.name} projectTicker={contribution.Project.ticker} bannerImage={contribution.Project.bannerImage} description={contribution.Project.description} raiseTokenAddress={contribution.Project.raiseTokenAddress} creatorName={contribution.Project.creator.name} projectImage={contribution.Project.image} backers={contribution.Project._count.contributions} followers={contribution.Project._count.followers} endDate={contribution.Project.raiseEndTimestamp} amountRaised={contribution.Project.amountRaised} target={contribution.Project.target} amountStaked={contribution.Project.amountStaked} nftDrop={true} />
 								))}
 							</div>
 						</div>

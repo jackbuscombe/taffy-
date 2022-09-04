@@ -57,9 +57,7 @@ export const protectedProjectRouter = createProtectedRouter()
 				});
 				console.log("Newly created Project is", createdProject);
 
-				return {
-					createdProject,
-				};
+				return createdProject;
 			} catch (error) {
 				console.log(error);
 				return;
@@ -120,38 +118,19 @@ export const protectedProjectRouter = createProtectedRouter()
 			}
 		},
 	})
-	// .mutation("followProject", {
-	// 	input: z.object({
-	// 		projectId: z.string(),
-	// 	}),
-	// 	async resolve({ input, ctx }) {
-	// 		await ctx.prisma.project.update({
-	// 			where: {
-	// 				id: input.projectId,
-	// 			},
-	// 			data: {
-	// 				followers: {
-	// 					create: {
-	// 						userId: ctx.session.user.id,
-	// 					},
-	// 				},
-	// 			},
-	// 		});
-	// 	},
-	// })
 	.query("checkIfFollowing", {
 		input: z.object({
 			projectId: z.string(),
 		}),
 		async resolve({ ctx, input }) {
-			const isFollowing = await ctx.prisma.project.findUnique({
+			const isFollowing = await ctx.prisma.project.findFirst({
 				where: {
-					id: input.projectId,
-				},
-				include: {
-					followers: {
-						where: {
-							id: ctx.session.user.id,
+					AND: {
+						id: input.projectId,
+						followers: {
+							some: {
+								id: ctx.session.user.id,
+							},
 						},
 					},
 				},

@@ -1,11 +1,14 @@
 import { CheckIcon, ChevronDownIcon, FilterIcon } from "@heroicons/react/outline";
 import { Pulsar } from "@uiball/loaders";
+import { GetServerSideProps } from "next";
+import { unstable_getServerSession } from "next-auth";
 import Link from "next/link";
 import { useState } from "react";
 import PaginationBar from "../components/PaginationBar";
 import VotingCard from "../components/VotingCard";
 import unixToDateTime from "../hooks/unixToDateTime";
 import { trpc } from "../utils/trpc";
+import { authOptions } from "./api/auth/[...nextauth]";
 
 function Voting() {
 	const { data: proposals, isFetching: fetchingProposals } = trpc.useQuery(["proposal.getUserProposals"]);
@@ -84,48 +87,21 @@ function Voting() {
 }
 export default Voting;
 
-// export async function getServerSideProps() {
-// 	// // Get the users contributions array
-// 	// let contributionArray = [];
+export const getServerSideProps: GetServerSideProps = async (context) => {
+	const session = await unstable_getServerSession(context.req, context.res, authOptions);
 
-// 	// const userContributionsRef = collection(db, "users", account, "contributions");
-// 	// const userContributionsSnap = await getDocs(userContributionsRef);
+	if (!session) {
+		return {
+			redirect: {
+				destination: "/",
+				permanent: false,
+			},
+		};
+	}
 
-// 	// if (!userContributionsSnap.empty) {
-// 	// 	contributionArray = userContributionsSnap.docs.map((doc) => ({
-// 	// 		id: doc.id,
-// 	// 		...doc.data(),
-// 	// 	}));
-// 	// }
-
-// 	// Get the 'proposals' array
-
-// 	// const docRef = collection(db, "proposals", account);
-// 	// const docSnap = await getDocs(docRef);
-// 	let proposals: ProposalType[] = [];
-// 	const q = query(collection(db, "proposals"), where("votingCloseTimestamp", ">", Math.floor(Date.now() / 1000)));
-
-// 	const querySnapshot = await getDocs(q);
-// 	querySnapshot.forEach((doc) => {
-// 		// console.log(doc.data().votes);
-// 		proposals.push({
-// 			id: doc.id,
-// 			description: doc.data().description,
-// 			options: doc.data().options,
-// 			projectId: doc.data().projectId,
-// 			projectImage: doc.data().projectImage,
-// 			projectName: doc.data().projectName,
-// 			projectTicker: doc.data().projectTicker,
-// 			question: doc.data().question,
-// 			title: doc.data().title,
-// 			...(doc.data().votes && { votes: doc.data().votes }),
-// 			votingCloseTimestamp: doc.data().votingCloseTimestamp,
-// 		});
-// 	});
-
-// 	return {
-// 		props: {
-// 			proposals,
-// 		},
-// 	};
-// }
+	return {
+		props: {
+			session,
+		},
+	};
+};
