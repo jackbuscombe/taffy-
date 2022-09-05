@@ -40,15 +40,15 @@ function TokenomicsLineChart({ beneficiaries, tokenSupply }: { beneficiaries: Be
 			// To work out the max date
 			totalVestingDurationArray.push((beneficiaries[i] as Beneficiary).vestingLength ?? 0);
 
-			let userTimestamps = [];
-			let userAmounts = [];
-			let userAllocation = tokenSupply * ((beneficiaries[i] as Beneficiary).percentage / 100);
+			const userTimestamps = [];
+			const userAmounts = [];
+			const userAllocation = tokenSupply * ((beneficiaries[i] as Beneficiary).percentage / 100);
 			let carryingBalance = 0;
 
 			// Find each timestamp the balance changes
 			if ((beneficiaries[i] as Beneficiary).vestingLength != null && (beneficiaries[i] as Beneficiary).vestingFrequency != null) {
-				let numberOfIncrements = ((beneficiaries[i] as Beneficiary).vestingLength as number) / ((beneficiaries[i] as Beneficiary).vestingFrequency as number);
-				let periodicIncrements = userAllocation / numberOfIncrements;
+				const numberOfIncrements = ((beneficiaries[i] as Beneficiary).vestingLength as number) / ((beneficiaries[i] as Beneficiary).vestingFrequency as number);
+				const periodicIncrements = userAllocation / numberOfIncrements;
 				for (let j = 0; j < ((beneficiaries[i] as Beneficiary).vestingLength ?? 0); j += (beneficiaries[i] as Beneficiary).vestingFrequency as number) {
 					userTimestamps.push(j);
 					userAmounts.push(carryingBalance);

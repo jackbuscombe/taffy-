@@ -850,7 +850,7 @@ function NewProject() {
 												</li>
 												<li
 													onClick={() => {
-														setRaiseAssetAddress("0x6b175474e89094c44da98b954eedeac495271d0f");
+														setRaiseAssetAddress("0x6B175474E89094C44Da98b954EedeAC495271d0F");
 														setIsRaiseAssetDropdownOpen(false);
 													}}
 												>
@@ -859,14 +859,14 @@ function NewProject() {
 															<img src="https://nomics.com/imgpr/https%3A%2F%2Fs3.us-east-2.amazonaws.com%2Fnomics-api%2Fstatic%2Fimages%2Fcurrencies%2FDAI.svg?width=96" alt="" className="h-4 w-4" />
 															<label className="font-medium text-gray-900 cursor-pointer">
 																<div>DAI</div>
-																<p className="text-xs font-normal text-gray-500">0x6b17...5271d0f</p>
+																<p className="text-xs font-normal text-gray-500">0x6B17...5271d0F</p>
 															</label>
 														</div>
 													</div>
 												</li>
 												<li
 													onClick={() => {
-														setRaiseAssetAddress("0x2260fac5e5542a773aa44fbcfedf7c193bc2c599");
+														setRaiseAssetAddress("0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599");
 														setIsRaiseAssetDropdownOpen(false);
 													}}
 												>
@@ -875,7 +875,7 @@ function NewProject() {
 															<img src="https://nomics.com/imgpr/https%3A%2F%2Fs3.us-east-2.amazonaws.com%2Fnomics-api%2Fstatic%2Fimages%2Fcurrencies%2FWBTC.png?width=96" alt="" className="h-4 w-4" />
 															<label className="font-medium text-gray-900 cursor-pointer">
 																<div>WBTC</div>
-																<p className="text-xs font-normal text-gray-500">0x2260...bc2c599</p>
+																<p className="text-xs font-normal text-gray-500">0x2260...bc2C599</p>
 															</label>
 														</div>
 													</div>
