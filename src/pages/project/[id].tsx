@@ -17,6 +17,8 @@ import { trpc } from "../../utils/trpc";
 import type { Nft, Proposal } from "@prisma/client";
 import { useBalance, useToken } from "wagmi";
 import { Pulsar } from "@uiball/loaders";
+import TokenomicsDoughnut from "../../components/TokenomicsDoughnut";
+import TokenomicsLineChart from "../../components/TokenomicsLineChart";
 // import tokenAddressToTicker from "../../utils/tokenAddressToTicker";
 
 function Project({ id }: { id: string }) {
@@ -512,8 +514,18 @@ function Project({ id }: { id: string }) {
 					<div className="flex flex-col w-2/3 bg-white rounded-md p-4 divide-y">
 						<div className="">
 							<h2 className="text-2xl text-gray-800 font-bold mb-5">Tokenomics</h2>
+							{project && (
+								<div className="flex items-center mb-8">
+									<div className="">
+										<TokenomicsDoughnut beneficiaries={project.beneficiaries} />
+									</div>
+									<div className="w-full">
+										<TokenomicsLineChart beneficiaries={project.beneficiaries} tokenSupply={project.tokenSupply} />
+									</div>
+								</div>
+							)}
 							<div className="flex flex-col md:flex-row space-x-4 py-4">
-								<p className="font-semibold">End Date:</p>
+								<p className="font-semibold">End of Raising Period:</p>
 								<p>{endDate && new Date(endDate * 1000).toUTCString()}</p>
 							</div>
 						</div>

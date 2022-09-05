@@ -163,6 +163,7 @@ export const projectRouter = createRouter()
 							amount: true,
 						},
 					},
+					beneficiaries: true,
 					nfts: true,
 				},
 			});

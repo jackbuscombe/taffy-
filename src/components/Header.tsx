@@ -126,7 +126,7 @@ function Header() {
 		<header className="bg-[#252d46] sticky top-0 flex justify-around w-full py-4 items-center text-sm text-white z-30">
 			{/* Left */}
 			<div className="flex items-center justify-between lg:space-x-12 md:space-x-2">
-				<Image onClick={handleHomeClick} src={"/logo_color_2.png"} width={70} height={40} className="cursor-pointer" />
+				<Image onClick={handleHomeClick} src={"/logo_color_2.png"} width={70} height={40} priority className="cursor-pointer" />
 				<div ref={searchWrapperRef}>
 					<div className="hidden sm:block bg-[#3b4258] items-center flex-1 rounded-md p-2 w-60 shadow-md hover:bg-slate-600">
 						<input onFocus={() => setIsSearchDropdownOpen(true)} onChange={debouncedChange} type="text" name="" id="" placeholder="Search" className="bg-transparent text-white placeholder:text-[#aaaaac] w-full outline-none text-sm" />
